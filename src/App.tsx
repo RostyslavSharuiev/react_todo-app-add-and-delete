@@ -1,26 +1,87 @@
-/* eslint-disable max-len */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React from 'react';
-import { UserWarning } from './UserWarning';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 
-const USER_ID = 0;
+import { getTodos } from './api/todos';
 
-export const App: React.FC = () => {
-  if (!USER_ID) {
-    return <UserWarning />;
-  }
+import { Todo } from './types/Todo';
+import { Errors } from './types/Errors';
+
+import { Header, TodoList, Footer, ErrorMessage, TodoItem } from './components';
+import { FilterBy } from './types/FilterBy';
+import { filterTodos } from './utils/FilterTodos';
+import { useTodos } from './hooks/useTodos';
+
+export const App: FC = () => {
+  const [errorMessage, setErrorMessage] = useState<Errors | null>(null);
+  const {
+    todos,
+    error,
+    isLoading,
+    title,
+    tempTodo,
+    setTodos,
+    setError,
+    setIsLoading,
+    handleError,
+    handleRemoveError,
+    handleAddTodo,
+    handleDeleteTodo,
+    setTitle,
+    setTempTodo,
+  } = useTodos();
+
+  const [selectedFilter, setSelectedFilter] = useState<FilterBy>(FilterBy.ALL);
+  // const [tempTodo, setTempTodo] = useState<Todo | null>(null);
+
+  const filteredTodos = filterTodos(todos, selectedFilter);
+  const isAllTodosCompleted = todos.every(todo => todo.completed);
+
+  const onAddTodo = (newTodo: Omit<Todo, Todo['id']>) => {
+    handleAddTodo(newTodo);
+    // setTempTodo(null);
+  };
+
+  const onDeleteTodo = (id: number) => {
+    handleDeleteTodo(id);
+  };
 
   return (
-    <section className="section container">
-      <p className="title is-4">
-        Copy all you need from the prev task:
-        <br />
-        <a href="https://github.com/mate-academy/react_todo-app-loading-todos#react-todo-app-load-todos">
-          React Todo App - Load Todos
-        </a>
-      </p>
+    <div className="todoapp">
+      <h1 className="todoapp__title">todos</h1>
 
-      <p className="subtitle">Styles are already copied</p>
-    </section>
+      <div className="todoapp__content">
+        <Header
+          todos={todos}
+          isAllTodosCompleted={isAllTodosCompleted}
+          isLoading={isLoading}
+          title={title}
+          handleError={handleError}
+          onAddTodo={onAddTodo}
+          setTempTodo={setTempTodo}
+          setTitle={setTitle}
+        />
+
+        <TodoList todos={filteredTodos} onDeleteTodo={onDeleteTodo} />
+
+        {tempTodo && (
+          <TodoItem
+            todo={tempTodo}
+            onDeleteTodo={handleDeleteTodo}
+            isLoading={isLoading}
+          />
+        )}
+
+        {!!todos.length && (
+          <Footer
+            selectedFilter={selectedFilter}
+            todos={todos}
+            onSelectFilter={setSelectedFilter}
+          />
+        )}
+      </div>
+
+      <ErrorMessage errorMessage={error} onClearError={handleRemoveError} />
+    </div>
   );
 };
