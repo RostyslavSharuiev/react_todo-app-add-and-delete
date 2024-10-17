@@ -1,27 +1,19 @@
-import {
-  ChangeEvent,
-  Dispatch,
-  FC,
-  FormEvent,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ChangeEvent, FC, FormEvent, useEffect, useRef, useState } from 'react';
 import cn from 'classnames';
 
 import { Todo } from '../../types/Todo';
 import { Errors } from '../../types/Errors';
 
-import { addTodo, USER_ID } from '../../api/todos';
+import { addTodo } from '../../api/todos';
 import { handleError } from '../../utils/handleError';
+import { USER_ID } from '../../constants/constants';
 
 interface Props {
   todos: Todo[];
   tempTodo: Todo | null;
-  setTodos: Dispatch<SetStateAction<Todo[]>>;
-  setError: Dispatch<SetStateAction<Errors>>;
-  setTempTodo: Dispatch<SetStateAction<Todo | null>>;
+  setTodos: (updateTodos: (todos: Todo[]) => Todo[]) => void;
+  setError: (error: Errors) => void;
+  setTempTodo: (todo: Todo | null) => void;
 }
 
 const Header: FC<Props> = ({
@@ -49,20 +41,18 @@ const Header: FC<Props> = ({
       return;
     }
 
-    const tmpTodo: Todo = {
-      id: 0,
-      userId: USER_ID,
-      title: formattedTitle,
-      completed: false,
-    };
-
-    setTempTodo(tmpTodo);
-
     const newTodo: Omit<Todo, 'id'> = {
       userId: USER_ID,
       title: formattedTitle,
       completed: false,
     };
+
+    const tmpTodo: Todo = {
+      id: 0,
+      ...newTodo,
+    };
+
+    setTempTodo(tmpTodo);
 
     try {
       const todo = await addTodo(newTodo);
@@ -84,7 +74,7 @@ const Header: FC<Props> = ({
     <header className="todoapp__header">
       <button
         type="button"
-        className={cn('todoapp__toggle-all active', {})}
+        className={cn('todoapp__toggle-all active')}
         data-cy="ToggleAllButton"
       />
 

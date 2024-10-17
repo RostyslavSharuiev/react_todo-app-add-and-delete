@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from 'react';
+import { FC } from 'react';
 import cn from 'classnames';
 
 import { Errors } from '../../types/Errors';
@@ -6,7 +6,7 @@ import { handleError } from '../../utils/handleError';
 
 interface Props {
   error: Errors;
-  setError: Dispatch<SetStateAction<Errors>>;
+  setError: (error: Errors) => void;
 }
 
 export const ErrorMessage: FC<Props> = ({ error, setError }) => {

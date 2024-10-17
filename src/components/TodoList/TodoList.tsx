@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from 'react';
+import { FC } from 'react';
 
 import { Todo } from '../../types/Todo';
 
@@ -7,7 +7,7 @@ import { TodoItem } from '../TodoItem';
 interface Props {
   todos: Todo[];
   idsForDelete: number[];
-  setIdsForDelete: Dispatch<SetStateAction<number[]>>;
+  setIdsForDelete: (prevIds: (ids: number[]) => number[]) => void;
 }
 
 export const TodoList: FC<Props> = ({

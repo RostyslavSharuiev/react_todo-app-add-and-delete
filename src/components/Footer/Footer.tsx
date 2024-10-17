@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from 'react';
+import { FC } from 'react';
 import cn from 'classnames';
 
 import { FilterBy } from '../../types/FilterBy';
@@ -7,8 +7,8 @@ interface Props {
   selectedFilter: FilterBy;
   completedTodosId: number[];
   numberOfActiveTodos: number;
-  setSelectedFilter: Dispatch<SetStateAction<FilterBy>>;
-  setIdsForDelete: Dispatch<React.SetStateAction<number[]>>;
+  setSelectedFilter: (filter: FilterBy) => void;
+  setIdsForDelete: (ids: number[]) => void;
 }
 
 const Footer: FC<Props> = ({
