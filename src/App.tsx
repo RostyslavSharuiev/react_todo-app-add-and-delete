@@ -6,9 +6,8 @@ import { Todo } from './types/Todo';
 import { Errors } from './types/Errors';
 import { FilterBy } from './types/FilterBy';
 
-import { getTodos } from './api/todos';
 import { getFilteredTodos } from './utils/getFilteredTodos';
-import { handleError } from './utils/handleError';
+import { handleFetchTodos } from './utils/handleFetchTodos';
 import { handleDeleteTodos } from './utils/handleDeleteTodos';
 
 import { Header, TodoList, Footer, ErrorMessage, TodoItem } from './components';
@@ -39,9 +38,7 @@ export const App: FC = () => {
   }, [idsForDelete]);
 
   useEffect(() => {
-    getTodos()
-      .then(setTodos)
-      .catch(() => handleError(Errors.LOAD_ERROR, setError));
+    handleFetchTodos(setTodos, setError);
   }, []);
 
   return (
