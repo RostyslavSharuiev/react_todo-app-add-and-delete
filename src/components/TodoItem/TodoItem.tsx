@@ -1,36 +1,30 @@
-import { FC } from 'react';
+import { Dispatch, FC, SetStateAction } from 'react';
 import cn from 'classnames';
 
 import { Todo } from '../../types/Todo';
 
 interface Props {
   todo: Todo;
-  isLoading?: {
-    fetching: boolean;
-    adding: boolean;
-    deleting: boolean;
-  };
-  onDeleteTodo: (id: number) => void;
+  idsForDelete?: number[];
+  setIdsForDelete: Dispatch<SetStateAction<number[]>>;
 }
 
 export const TodoItem: FC<Props> = ({
   todo,
-  isLoading = {
-    fetching: false,
-    adding: false,
-    deleting: false,
-  },
-  onDeleteTodo,
+  idsForDelete,
+  setIdsForDelete,
 }) => {
-  const { title, completed } = todo;
+  const { id, title, completed } = todo;
 
-  console.log(isLoading);
+  const handleDelete = () => {
+    setIdsForDelete(currentIds => [...currentIds, id]);
+  };
 
   return (
     <div
       data-cy="Todo"
       className={cn('todo', {
-        completed: completed,
+        completed,
       })}
     >
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
@@ -51,7 +45,7 @@ export const TodoItem: FC<Props> = ({
         type="button"
         className="todo__remove"
         data-cy="TodoDelete"
-        onClick={() => onDeleteTodo(todo.id)}
+        onClick={handleDelete}
       >
         ×
       </button>
@@ -59,7 +53,7 @@ export const TodoItem: FC<Props> = ({
       <div
         data-cy="TodoLoader"
         className={cn('modal overlay', {
-          'is-active': isLoading.adding || isLoading.deleting,
+          'is-active': !id || idsForDelete?.includes(id),
         })}
       >
         <div className="modal-background has-background-white-ter" />

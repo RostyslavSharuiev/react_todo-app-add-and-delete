@@ -1,28 +1,33 @@
-import { FC } from 'react';
+import { Dispatch, FC, SetStateAction } from 'react';
 import cn from 'classnames';
 
 import { Errors } from '../../types/Errors';
+import { handleError } from '../../utils/handleError';
 
 interface Props {
-  errorMessage: Errors | null;
-  onClearError: () => void;
+  error: Errors;
+  setError: Dispatch<SetStateAction<Errors>>;
 }
 
-export const ErrorMessage: FC<Props> = ({ errorMessage, onClearError }) => {
+export const ErrorMessage: FC<Props> = ({ error, setError }) => {
+  const handleClose = () => {
+    handleError(Errors.DEFAULT, setError);
+  };
+
   return (
     <div
       data-cy="ErrorNotification"
       className={cn('notification is-danger is-light has-text-weight-normal', {
-        hidden: !errorMessage?.length,
+        hidden: !error,
       })}
     >
       <button
         data-cy="HideErrorButton"
         type="button"
         className="delete"
-        onClick={onClearError}
+        onClick={handleClose}
       />
-      {errorMessage}
+      {error}
     </div>
   );
 };

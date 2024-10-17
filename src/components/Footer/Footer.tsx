@@ -1,27 +1,29 @@
-import { FC } from 'react';
+import { Dispatch, FC, SetStateAction } from 'react';
 import cn from 'classnames';
 
-import { Todo } from '../../types/Todo';
 import { FilterBy } from '../../types/FilterBy';
-
-import { filterTodos } from '../../utils/FilterTodos';
 
 interface Props {
   selectedFilter: FilterBy;
-  todos: Todo[];
-  onSelectFilter: (filter: FilterBy) => void;
+  completedTodosId: number[];
+  numberOfActiveTodos: number;
+  setSelectedFilter: Dispatch<SetStateAction<FilterBy>>;
+  setIdsForDelete: Dispatch<React.SetStateAction<number[]>>;
 }
 
-const Footer: FC<Props> = ({ selectedFilter, todos, onSelectFilter }) => {
-  const activeTodos = filterTodos(todos, FilterBy.ACTIVE);
-  const completedTodos = filterTodos(todos, FilterBy.COMPLETED);
-
-  const filters = Object.values(FilterBy).filter(filter => filter.length);
+const Footer: FC<Props> = ({
+  selectedFilter,
+  completedTodosId,
+  numberOfActiveTodos,
+  setSelectedFilter,
+  setIdsForDelete,
+}) => {
+  const filters = Object.values(FilterBy);
 
   return (
     <footer className="todoapp__footer" data-cy="Footer">
       <span className="todo-count" data-cy="TodosCounter">
-        {activeTodos.length} items left
+        {numberOfActiveTodos} items left
       </span>
 
       <nav className="filter" data-cy="Filter">
@@ -33,7 +35,7 @@ const Footer: FC<Props> = ({ selectedFilter, todos, onSelectFilter }) => {
               selected: filter === selectedFilter,
             })}
             data-cy={`FilterLink${filter}`}
-            onClick={() => onSelectFilter(filter)}
+            onClick={() => setSelectedFilter(filter)}
           >
             {filter}
           </a>
@@ -44,7 +46,8 @@ const Footer: FC<Props> = ({ selectedFilter, todos, onSelectFilter }) => {
         type="button"
         className="todoapp__clear-completed"
         data-cy="ClearCompletedButton"
-        disabled={!completedTodos.length}
+        onClick={() => setIdsForDelete(completedTodosId)}
+        disabled={!completedTodosId.length}
       >
         Clear completed
       </button>
